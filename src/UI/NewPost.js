@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 
 const NewPost = (props) => {
   const { isEdit, editObj } = props;
-  console.log(isEdit, editObj);
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
 

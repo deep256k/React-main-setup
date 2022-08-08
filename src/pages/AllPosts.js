@@ -3,63 +3,46 @@ import { Box, Button, Heading, Spinner } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import AuthContext from "../store/auth-context";
+import useHttp from "../hooks/use-http";
 
 const API_URL = "http://localhost:8080";
 
 const AllPosts = () => {
+  //console.log("AllPosts running");
   const [posts, setPosts] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const authCtx = useContext(AuthContext);
   const history = useHistory();
+  const [fetchUpdated, setfetchUpdated] = useState(false);
 
-  const fetchPosts = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const resposne = await fetch(`${API_URL}/feed/posts`, {
-        headers: {
-          Authorization: "Bearer " + authCtx?.token,
-        },
-      });
-      if (!resposne.ok) {
-        console.log("error");
-        //throw new Error("Something went wrong");
-      }
-      const data = await resposne.json();
-      const fetchedPosts = data.posts;
-      setPosts(fetchedPosts);
-    } catch (err) {
-      console.log("error thrown", err);
-      setError(err.message || "Something went wrong");
-      console.log("there is some errpr");
-    }
-    setLoading(false);
+  const modifyData = (data) => {
+    const fetchedPosts = data.posts;
+    setPosts(fetchedPosts);
   };
 
-  const deletePostHandler = async (postId) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const resposne = await fetch(`${API_URL}/feed/post/${postId}`, {
+  const { error, loading, sendRequests: managePosts } = useHttp();
+
+  const deletePostHandler = (postId) => {
+    managePosts(
+      {
+        url: `${API_URL}/feed/post/${postId}`,
+        headers: { Authorization: "Bearer " + authCtx?.token },
         method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + authCtx?.token,
-        },
-      });
-      if (!resposne.ok) {
-        console.log("error");
-        //throw new Error("Something went wrong");
+      },
+      () => {
+        setfetchUpdated(true);
       }
-      const data = await resposne.json();
-      if (data) {
-        fetchPosts();
-      }
-    } catch (err) {
-      setError(err.message || "Something went wrong");
-    }
-    setLoading(false);
+    );
   };
+
+  useEffect(() => {
+    managePosts(
+      {
+        url: `${API_URL}/feed/posts`,
+        headers: { Authorization: "Bearer " + authCtx?.token },
+      },
+      modifyData
+    );
+  }, [authCtx?.token, managePosts, fetchUpdated]);
 
   const viewPostsHandler = (postId) => {
     history.push(`/post-details/${postId}`);
@@ -73,10 +56,6 @@ const AllPosts = () => {
     history.push(`/edit-post/${postId}`);
   };
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
   return (
     <Box>
       <Box textAlign={"center"} mb={5}>
@@ -87,7 +66,7 @@ const AllPosts = () => {
       {error && (
         <Box>
           <Heading>{error}</Heading>
-          <Button>Fetch Again </Button>
+          <Button onClick={() => managePosts()}>Fetch Again </Button>
         </Box>
       )}
       {loading && (
@@ -101,7 +80,7 @@ const AllPosts = () => {
           />
         </Box>
       )}
-      {posts.length === 0 && !loading && (
+      {posts.length === 0 && !loading && !error && (
         <Heading textAlign={"center"} color="#3b0062">
           Currently There are No Posts. Please add a Post
         </Heading>

@@ -1,20 +1,25 @@
 import AuthForm from "../UI/AuthForm";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import AuthContext from "../store/auth-context";
+import useHttp from "../hooks/use-http";
+import { Box, Spinner, Heading } from "@chakra-ui/react";
 
 const API_URL = "http://localhost:8080";
 
 const AuthPage = () => {
-  const [posts, setPosts] = useState([]);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const history = useHistory();
   const authCtx = useContext(AuthContext);
 
-  const manageAuth = async (isLogin, authObj) => {
-    setLoading(true);
-    setError(null);
+  const { error, loading, sendRequests: manageAuth } = useHttp();
+
+  const onAuthSuccess = (isLogin, data) => {
+    if (isLogin) {
+      authCtx.login(data.token, Date.now() + 3600000);
+      history.replace("/posts");
+    }
+  };
+  const authHandler = (isLogin, authObj) => {
     let method;
     let url;
     if (isLogin) {
@@ -24,35 +29,39 @@ const AuthPage = () => {
       method = "PUT";
       url = `${API_URL}/auth/signup`;
     }
-    try {
-      const resposne = await fetch(url, {
+    manageAuth(
+      {
+        url: url,
         method: method,
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(authObj),
-      });
-      if (!resposne.ok) {
-        throw new Error("Something went wrong");
-      }
-      const data = await resposne.json();
-      if (isLogin) {
-        authCtx.login(data.token, Date.now() + 10000);
-        history.replace("/posts");
-      }
-      console.log("data is ", data);
-    } catch (err) {
-      console.log("error thrown", err);
-      setError(err.message || "Something went wrong");
-    }
-    setLoading(false);
+      },
+      onAuthSuccess.bind(this, isLogin)
+    );
   };
-
-  const authHandler = (isLogin, authObj) => {
-    manageAuth(isLogin, authObj);
-    console.log("login", isLogin, authObj);
-  };
-  return <AuthForm authHandler={authHandler}></AuthForm>;
+  return (
+    <Box>
+      {loading && (
+        <Box textAlign={"center"}>
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+        </Box>
+      )}
+      <AuthForm authHandler={authHandler}></AuthForm>;
+      {error && (
+        <Box>
+          <Heading color={"red"}>{error}</Heading>
+        </Box>
+      )}
+    </Box>
+  );
 };
 
 export default AuthPage;
