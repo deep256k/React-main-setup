@@ -19,7 +19,6 @@ const useHttp = () => {
       const data = await res.json();
       modifyData(data);
     } catch (err) {
-      console.log("error", err);
       setError(err.message || "Something went wrong");
     }
     setLoading(false);

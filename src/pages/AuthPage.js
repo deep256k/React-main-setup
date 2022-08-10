@@ -1,5 +1,5 @@
 import AuthForm from "../UI/AuthForm";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import AuthContext from "../store/auth-context";
 import useHttp from "../hooks/use-http";
@@ -14,10 +14,8 @@ const AuthPage = () => {
   const { error, loading, sendRequests: manageAuth } = useHttp();
 
   const onAuthSuccess = (isLogin, data) => {
-    if (isLogin) {
-      authCtx.login(data.token, Date.now() + 3600000);
-      history.replace("/posts");
-    }
+    authCtx.login(data.token, Date.now() + 3600000);
+    history.replace("/posts");
   };
   const authHandler = (isLogin, authObj) => {
     let method;

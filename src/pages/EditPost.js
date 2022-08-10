@@ -29,7 +29,6 @@ const EditPost = () => {
         },
       });
       if (!resposne.ok) {
-        console.log("error");
         //throw new Error("Something went wrong");
       }
       const data = await resposne.json();
@@ -38,7 +37,6 @@ const EditPost = () => {
         content: data.post.content,
       };
     } catch (err) {
-      console.log("error thrown", err);
       //setError(err.message || "Something went wrong");
     }
     // setLoading(false);
@@ -53,7 +51,7 @@ const EditPost = () => {
   const postHandler = (postObj) => {
     managePosts(
       {
-        url: `${API_URL}/feed/postt/${postId}`,
+        url: `${API_URL}/feed/post/${postId}`,
         method: "PUT",
         body: JSON.stringify(postObj),
         headers: {
