@@ -142,7 +142,7 @@ const AuthForm = (props) => {
             mb={5}
             isInvalid={emailState.isValid === false}
           >
-            <FormLabel htmlFor="email">Enter Your Email</FormLabel>
+            <FormLabel htmlFor="email">Enter Your email</FormLabel>
             <Input
               id="title"
               type="email"
