@@ -1,5 +1,5 @@
 import AuthForm from "../UI/AuthForm";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import AuthContext from "../store/auth-context";
 import useHttp from "../hooks/use-http";
@@ -12,6 +12,13 @@ const AuthPage = () => {
   const authCtx = useContext(AuthContext);
 
   const { error, loading, sendRequests: manageAuth } = useHttp();
+
+  useEffect(() => {
+    console.log("useeffevt running");
+    return () => {
+      console.log("clean up");
+    };
+  }, []);
 
   const onAuthSuccess = (isLogin, data) => {
     authCtx.login(data.token, Date.now() + 3600000);
