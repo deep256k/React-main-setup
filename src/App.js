@@ -1,11 +1,11 @@
-import logo from "./logo.svg";
 import "./App.css";
 import { Box } from "@chakra-ui/react";
+import Depth from "./Depth";
 
 function App() {
   return (
     <div className="App">
-      <Box p={6}>This is from Chakra</Box>
+      <Depth></Depth>
     </div>
   );
 }
