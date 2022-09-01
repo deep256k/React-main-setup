@@ -8,8 +8,6 @@ import { INCREASE_COUNTER } from "../redux/constant";
 const Counter = () => {
   const dispatch = useDispatch();
   const value = useSelector((state) => state);
-  console.log("value is", value);
-
   const incrementHandler = () => {
     dispatch({ type: INCREASE_COUNTER, payload: 5 });
   };
@@ -23,6 +21,7 @@ const Counter = () => {
       <Box>{value.counterData.counter}</Box>
       <Button onClick={incrementHandler}>Increase</Button>
       <Button onClick={() => dispatch(decreaseCounter())}>Decrease</Button>
+      <Button onClick={() => dispatch(fetchData())}>Fetch Data</Button>
     </Box>
   );
 };
