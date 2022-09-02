@@ -1,20 +1,15 @@
-import { DECREASE_COUNTER, FETCH_PRODUCTS, INCREASE_COUNTER } from "./constant";
+import { REMOVE_FROM_CART, ADD_TO_CART } from "./constant";
 
-export const increaseCounter = () => {
+export const addToCart = (cartItem) => {
   return {
-    type: INCREASE_COUNTER,
+    type: ADD_TO_CART,
+    payload: cartItem,
   };
 };
 
-export const decreaseCounter = () => {
+export const removeFromCart = (productId) => {
   return {
-    type: DECREASE_COUNTER,
-    payload: 5,
-  };
-};
-
-export const fetchData = () => {
-  return {
-    type: FETCH_PRODUCTS,
+    type: REMOVE_FROM_CART,
+    payload: productId,
   };
 };

@@ -1,6 +1,8 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import { counterData } from "./reducer";
+import { cartData } from "./cartReducer";
+import { productReducer } from "./productReducer";
 
 export default combineReducers({
-  counterData,
+  cartData,
+  productReducer,
 });
