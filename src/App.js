@@ -15,13 +15,15 @@ import NavBar from "./UI/NavBar";
 
 function App() {
   const authCtx = useContext(AuthContext);
+  console.log("authCtx", authCtx);
   return (
     <Box>
       <NavBar></NavBar>
       <Layout>
         <Switch>
           <Route path="/" exact>
-            <Redirect to="/auth"></Redirect>
+            {!authCtx.isLoggedIn && <Redirect to="/auth"></Redirect>}
+            {authCtx.isLoggedIn && <Redirect to="/posts"></Redirect>}
           </Route>
           {authCtx.isLoggedIn && (
             <Route path="/posts">
